@@ -6,7 +6,7 @@
 
     <groupId>GazpromInform</groupId>
     <artifactId>HabrahabrGraph</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
 
     <build>
         <plugins>
@@ -24,7 +24,7 @@
                 </executions>
                 <configuration>
                     <mainClass>Application.MainApp</mainClass>
-                    <jfxAppOutputDir>$/jfx</jfxAppOutputDir>
+                    <jfxAppOutputDir>jfx</jfxAppOutputDir>
                     <verbose>true</verbose>
                     <appName>jGallery</appName>
                 </configuration>

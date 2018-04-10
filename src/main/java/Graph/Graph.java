@@ -61,10 +61,11 @@ private void FillLinks(Vertex current) {
         //Проверка, если уже такая вершина в массиве вершин
         checked = false;
         //Проверка, ведет ли ссылка другую публикацию. Все ссылки, ведущие в другие места отбрасываются
-        if (link.select("a").attr("href").startsWith("https://habrahabr.ru/post")) {
+        if (link.select("a").attr("href").startsWith("/post")) {
             //Осуществляется проход по всему массиву вершин, для всех не пустых элементов сравниваем их URL с URL ссылки из элемента списка links
             for (int i = 0; i < VertexList.length; i++) {
-                if (VertexList[i] != null && link.select("a").attr("href").equals(VertexList[i].getURL())) {
+                String post="https://habrahabr.ru"+link.select("a").attr("href");
+                if (VertexList[i] != null && post.equals(VertexList[i].getURL())) {
                     //Если в массиве вершин уже есть вершина с таким URL, то передаем в список связей текущего объекта ссылку на нее
                     current.setLinks(VertexList[i]);
                     checked = true;
@@ -75,34 +76,9 @@ private void FillLinks(Vertex current) {
                 //Проверка на переполнение списка вершин, новые вершины будут добавляться только если не превышено их максимальное количество
                 if (elements != VertexList.length) {
                     //В массиве вершин создается новая вершина
-                    VertexList[elements] = new Vertex(link.select("a").attr("href"));
+                    String post="https://habrahabr.ru"+link.select("a").attr("href");
+                    VertexList[elements] = new Vertex(post);
                     //В список связей текущего объекта передается ссылка на него, счетчик вершин увеличивается на 1
-                    current.setLinks(VertexList[elements]);
-                    elements++;
-                }
-            }
-        }
-    }
-    /*Заполнение связей по тегам. Сам объект тег хранит в себе только свое название и список URL страниц на которые ведет,
-    в этом методе в список связей объекта добаляются все связи, опосредованные тегом.
-    Сначала проходим по списку тегов текущего объекта*/
-    for (TagBridge tag : current.getTags()) {
-        //Для каждого объекта тега проходим по списку его URL
-        for(String URL: tag.getLinks()){
-            checked = false;
-            //Сравнение URL из списка тега с URL всех объектов вершин
-            for (int i = 0; i < VertexList.length; i++) {
-                //Если в массиве вершин уже есть объект с таким же URL, то текущий объект получает в свой список связей ссылку на него
-                if (VertexList[i] != null && URL.equals(VertexList[i].getURL())) {
-                    current.setLinks(VertexList[i]);
-                    checked = true;
-                }
-            }
-            /*Если такого объекта нет и количество объектов не превысило максимальное, в массиве вершин создается новый объект и
-            текущий объект получает в список связей ссылку на него, счетчик вершин увеличивается на 1*/
-            if (checked == false) {
-                if (elements != VertexList.length) {
-                    VertexList[elements] = new Vertex(URL);
                     current.setLinks(VertexList[elements]);
                     elements++;
                 }

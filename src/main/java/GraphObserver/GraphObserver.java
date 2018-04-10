@@ -214,7 +214,7 @@ public class GraphObserver {
         Collections.sort(sortedHash,comparator);
         return sortedHash;
     }
-    //Метод ищущий ссылки на одну вершину
+    //Метод ищущий ссылки на одну вершину и ссылки, ведущие от нее
     public ObservableList<Vertex> ShowLinkedObjects(Graph graph, String URL,String sort){
         ShowLinkedObjects=new HashMap<String, Vertex>();
         LinkedList<Vertex>VertexQueue=new LinkedList<Vertex>();
@@ -224,12 +224,21 @@ public class GraphObserver {
         //Проходим по всему графу и ищем ссылки на указанный обхект
         while(VertexQueue.peek()!=null){
             VertexQueue.peek().setPassed(true);
-            for(Vertex link: VertexQueue.peek().getLinks()){
+            //Если найденный объект и есть та самая вершина, в HashMap добавляются все объекты на которые у него есть ссылки
+            if(VertexQueue.peek().getURL().equals(URL)){
                 check=false;
-                //Если ссылка найдена, вложенный цикл прерывается, а объект, содержащий ссылку, добавляется в HashMap
-                if(link.getURL().equals(URL)){
-                    check=true;
-                    break;
+                for(Vertex link: VertexQueue.peek().getLinks()){
+                    ShowLinkedObjects.put(link.getURL(),link);
+                }
+            }else {
+                //Иначе смотрим на ссылки текущей вершины и ищем нужную
+                for(Vertex link: VertexQueue.peek().getLinks()){
+                    check=false;
+                    //Если ссылка найдена, вложенный цикл прерывается, а объект, содержащий ссылку, добавляется в HashMap
+                    if(link.getURL().equals(URL)){
+                        check=true;
+                        break;
+                    }
                 }
             }
             if(check) {

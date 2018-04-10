@@ -88,38 +88,19 @@ public class Vertex {
         return tags;
     }
 
-    public String getTagsAsString(){
-        String tagstring="";
-        String add;
-        for(TagBridge tag: tags){
-            add=tag.getName()+" ";
-            tagstring=tagstring+add;
-        }
-        return tagstring;
-    }
-
-    public String getLinksAsString(){
-        String linkstring="";
-        String add;
-        for(Vertex vertex: links){
-            add=vertex.getName()+" "+vertex.getURL()+" ";
-            linkstring=linkstring+add;
-        }
-        return linkstring;
-    }
-
     private String TagString(){
         String result="";
         for (Element tag : intags) {
-            result = result+tag.select(".post__tag").text()+", ";
+            result = result+tag.select(".post__tag").text()+"\n";
         }
         return result;
     }
     private String LinkString(){
         String result="";
         for (Element link : inlinks) {
-            if (link.select("a").attr("href").startsWith("https://habrahabr.ru/post")) {
-            result = result+link.select("a").attr("href")+", ";
+            if (link.select("a").attr("href").startsWith("/post")) {
+                String post=link.select(".post-info__title_large").text()+" (https://habrahabr.ru"+link.select("a").attr("href")+")";
+            result = result+post+"\n";
             }
         }
         return result;

@@ -9,9 +9,7 @@ import javafx.scene.control.*;
 import Graph.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Controller {
     @FXML
@@ -60,6 +58,7 @@ public class Controller {
     private String choserating;
     private String linkedURL;
     private String filepath;
+    private boolean chose=false;
     List<String> choicerating = new ArrayList<String>();
     private ObservableList<Vertex> TableView= FXCollections.observableArrayList();
 
@@ -107,6 +106,7 @@ public class Controller {
                     LGraph.setVisible(true);
                     URL.setVisible(false);
                     VERTEX_NUMBER.setVisible(false);
+                    TableView.removeAll(TableView);
                     graph = new Graph(URL.getText(), Integer.parseInt(VERTEX_NUMBER.getText()));
                     LURL.setVisible(true);
                     LVertex.setVisible(true);
@@ -142,47 +142,55 @@ public class Controller {
     }
     public void ShowLinkedObjects(){
         ChoiseURLDialog();
-        ChoiseRatingDialog();
-        if(choserating.equals("Рейтинг публикации")){
-            GO=new GraphObserver();
-            TableView.removeAll(TableView);
-            TableView.addAll(GO.ShowLinkedObjects(graph,linkedURL,"rating"));
-            VertexTable.setItems(TableView);
-        }
-        else if(choserating.equals("Количество просмотров")){
-            GO=new GraphObserver();
-            TableView.removeAll(TableView);
-            TableView.addAll(GO.ShowLinkedObjects(graph,linkedURL,"views"));
-            VertexTable.setItems(TableView);
-        }
-        else if(choserating.equals("Количество сохранений")){
-            GO=new GraphObserver();
-            TableView.removeAll(TableView);
-            TableView.addAll(GO.ShowLinkedObjects(graph,linkedURL,"saves"));
-            VertexTable.setItems(TableView);
+        if(chose==true) {
+            chose = false;
+            ChoiseRatingDialog();
+            if (chose == true) {
+                chose = false;
+                if (choserating.equals("Рейтинг публикации")) {
+                    GO = new GraphObserver();
+                    TableView.removeAll(TableView);
+                    TableView.addAll(GO.ShowLinkedObjects(graph, linkedURL, "rating"));
+                    VertexTable.setItems(TableView);
+                } else if (choserating.equals("Количество просмотров")) {
+                    GO = new GraphObserver();
+                    TableView.removeAll(TableView);
+                    TableView.addAll(GO.ShowLinkedObjects(graph, linkedURL, "views"));
+                    VertexTable.setItems(TableView);
+                } else if (choserating.equals("Количество сохранений")) {
+                    GO = new GraphObserver();
+                    TableView.removeAll(TableView);
+                    TableView.addAll(GO.ShowLinkedObjects(graph, linkedURL, "saves"));
+                    VertexTable.setItems(TableView);
+                }
+            }
         }
     }
 
-    public void SortBy(){
+    public void SortBy() {
         ChoiseTagDialog();
-        ChoiseRatingDialog();
-        if(choserating.equals("Рейтинг публикации")){
-            GO=new GraphObserver();
-            TableView.removeAll(TableView);
-            TableView.addAll(GO.SortByRatings(graph,chosetag));
-            VertexTable.setItems(TableView);
-        }
-        else if(choserating.equals("Количество просмотров")){
-            GO=new GraphObserver();
-            TableView.removeAll(TableView);
-            TableView.addAll(GO.SortByViews(graph,chosetag));
-            VertexTable.setItems(TableView);
-        }
-        else if(choserating.equals("Количество сохранений")){
-            GO=new GraphObserver();
-            TableView.removeAll(TableView);
-            TableView.addAll(GO.SortBySaves(graph,chosetag));
-            VertexTable.setItems(TableView);
+        if (chose == true) {
+            chose = false;
+            ChoiseRatingDialog();
+            if (chose == true) {
+                chose = false;
+                if (choserating.equals("Рейтинг публикации")) {
+                    GO = new GraphObserver();
+                    TableView.removeAll(TableView);
+                    TableView.addAll(GO.SortByRatings(graph, chosetag));
+                    VertexTable.setItems(TableView);
+                } else if (choserating.equals("Количество просмотров")) {
+                    GO = new GraphObserver();
+                    TableView.removeAll(TableView);
+                    TableView.addAll(GO.SortByViews(graph, chosetag));
+                    VertexTable.setItems(TableView);
+                } else if (choserating.equals("Количество сохранений")) {
+                    GO = new GraphObserver();
+                    TableView.removeAll(TableView);
+                    TableView.addAll(GO.SortBySaves(graph, chosetag));
+                    VertexTable.setItems(TableView);
+                }
+            }
         }
     }
 
@@ -200,23 +208,34 @@ public class Controller {
         Optional<String> result = dialog.showAndWait();
         if(result.isPresent()){
             chosetag=result.get();
+            chose=true;
         }
     }
 
     private void ChoiseURLDialog(){
         List<String> choices = new ArrayList<String>();
+        HashMap<String,String> nameurl=new HashMap<>();
         for(Vertex link: graph.getGraphArray()){
             if(link!=null) {
-                choices.add(link.getURL());
+                nameurl.put(link.getURL(),link.getName());
             }
         }
+        for(Map.Entry<String,String> map: nameurl.entrySet()){
+            choices.add(map.getValue());
+        }
         ChoiceDialog<String> dialog = new ChoiceDialog<String>(choices.get(0),choices);
-        dialog.setTitle("Выбор URL");
-        dialog.setHeaderText("Выберите URL, для которого вы хотите найти связанные объекты");
-        dialog.setContentText("URL:");
+        dialog.setTitle("Выбор публикации");
+        dialog.setHeaderText("Выберите публикацию, для которой вы хотите найти связанные объекты");
+        dialog.setContentText("Публикация:");
         Optional<String> result = dialog.showAndWait();
         if(result.isPresent()){
-            linkedURL=result.get();
+            for(Map.Entry<String,String> map: nameurl.entrySet()){
+                if(result.get().equals(map.getValue())){
+                    linkedURL=map.getKey();
+                    break;
+                }
+            }
+            chose=true;
         }
     }
 
@@ -228,6 +247,7 @@ public class Controller {
         Optional<String> result = dialog.showAndWait();
         if(result.isPresent()){
             choserating=result.get();
+            chose=true;
         }
     }
 
@@ -250,7 +270,7 @@ public class Controller {
             String [] columns="Название публикации;Ссылка;Дата;Тэги;Ссылки;Рейтинг;Просмотры;Сохранения".split(";");
             writer.writeNext(columns);
             for (Vertex vertex : TableView) {
-                String record =vertex.getName() + ";" + vertex.getURL() + ";" + vertex.getDate() + ";" + vertex.getTagsAsString() + ";" + vertex.getLinksAsString() + ";" + vertex.getRating() + ";" + vertex.getViews() + ";" + vertex.getSaves();
+                String record =vertex.getName() + ";" + vertex.getURL() + ";" + vertex.getDate() + ";" + vertex.getTagtext() + ";" + vertex.getLinktext() + ";" + vertex.getRating() + ";" + vertex.getViews() + ";" + vertex.getSaves();
                 String[] text = record.split(";");
                 writer.writeNext(text);
             }
