@@ -37,10 +37,11 @@ public class GraphObserver {
         }
         //Осуществляем проход по всей HashMap и помещаем ее записи в ObservableList
         for(Map.Entry<String,Vertex> map: ShowAllVertex.entrySet()){
-            String stringkey=map.getKey();
             for(Vertex vertex: graph.getGraphArray()){
-                if(stringkey.equals(vertex.getURL())){
-                    result.add(vertex);
+                if(vertex!=null) {
+                    if (map.getKey().equals(vertex.getURL())) {
+                        result.add(vertex);
+                    }
                 }
             }
         }
@@ -128,8 +129,8 @@ public class GraphObserver {
     //Проверка соответствия хотя бы одного тега вершины заявленной категории
     private boolean CheckCategory(Vertex vertex, String category){
         //Проходим по всем тегам вершины, если есть хоть одно совпадение с категорией, возвращаем true
-        for(TagBridge tag: vertex.getTags()){
-            if(tag.getName().equals(category))return true;
+        for(String tag: vertex.getTags()){
+            if(tag.equals(category))return true;
         }
         return false;
     }

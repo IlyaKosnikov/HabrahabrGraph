@@ -50,6 +50,8 @@ public class Controller {
     private TableColumn<Vertex, String> ViewsColumn;
     @FXML
     private TableColumn<Vertex, String> SavesColumn;
+    @FXML
+    ProgressBar Progress;
 
     private boolean created;
     private Graph graph;
@@ -63,6 +65,7 @@ public class Controller {
     private ObservableList<Vertex> TableView= FXCollections.observableArrayList();
 
     @FXML private void initialize(){
+        Progress.setVisible(false);
         filepath="ExportData.csv";
         choicerating.add("Рейтинг публикации");
         choicerating.add("Количество просмотров");
@@ -105,9 +108,11 @@ public class Controller {
                     CreateGraph.setVisible(false);
                     LGraph.setVisible(true);
                     URL.setVisible(false);
+                    Progress.setVisible(true);
                     VERTEX_NUMBER.setVisible(false);
                     TableView.removeAll(TableView);
                     graph = new Graph(URL.getText(), Integer.parseInt(VERTEX_NUMBER.getText()));
+                    Progress.setVisible(false);
                     LURL.setVisible(true);
                     LVertex.setVisible(true);
                     CreateGraph.setVisible(true);
@@ -121,7 +126,9 @@ public class Controller {
                     VERTEX_NUMBER.setVisible(true);
                 }
             });
-            CG.start();
+
+                CG.start();
+
         }
         else{
             Alert wrongURL=new Alert(Alert.AlertType.WARNING);
@@ -196,9 +203,9 @@ public class Controller {
 
     private void ChoiseTagDialog(){
         List<String> choices = new ArrayList<String>();
-        for(TagBridge tag: graph.getTagArray()){
+        for(String tag: graph.getTagArray()){
             if(tag!=null) {
-                choices.add(tag.getName());
+                choices.add(tag);
             }
         }
         ChoiceDialog<String> dialog = new ChoiceDialog<String>(choices.get(0),choices);

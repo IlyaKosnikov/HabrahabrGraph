@@ -18,7 +18,7 @@ public class Vertex {
     private Elements intags;
     private Elements inlinks;
     private HashSet<Vertex> links = new HashSet<Vertex>();
-    private HashSet<TagBridge> tags = new HashSet<TagBridge>();
+    private HashSet<String> tags = new HashSet<>();
     private String rating;
     private String views;
     private String saves;
@@ -37,12 +37,17 @@ public class Vertex {
             this.date = doc.select(".post__time").first().text();
             this.name = doc.select(".post__title-text").first().text();
             this.views = doc.select(".post-stats__views-count").first().text();
-            this.intags = doc.getElementsByClass("inline-list__item_tag");
+            this.intags = doc.getElementsByClass("post__tag");
             this.inlinks = doc.getElementsByClass("post-info");
-            this.rating = doc.select(".stacked-counter__value.stacked-counter__value_magenta").first().text();
+            if(doc.hasClass("stacked-counter__value_magenta")) {
+                this.rating = doc.select(".stacked-counter__value.stacked-counter__value_magenta").first().text();
+            }else  this.rating="0,0";
             this.saves = doc.select(".bookmark__counter.js-favs_count").first().text();
             this.linktext=LinkString();
             this.tagtext=TagString();
+            for (Element tag: intags){
+                tags.add(tag.text());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,11 +85,11 @@ public class Vertex {
         return inlinks;
     }
 
-    public void setTags(TagBridge tag) {
+    public void setTags(String tag) {
         tags.add(tag);
     }
 
-    public HashSet<TagBridge> getTags(){
+    public HashSet<String> getTags(){
         return tags;
     }
 
